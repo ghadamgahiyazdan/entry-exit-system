@@ -20,8 +20,7 @@ model Employee {
 model Shift {
   id          Int       @id @default(autoincrement())
   title       String
-  entryTime   String
-  exitTime    String
+  time   String
   employees   Employee[] // Many-to-many relationship with Employee
   reports     Report[]   // Relationship to reports
 }

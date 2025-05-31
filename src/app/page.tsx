@@ -16,7 +16,6 @@ const employeeShifts = [
     status: "حاضر",
     shift: "شیفت صبح",
     time: "۸:۰۰ - ۱۶:۰۰",
-    hours: 8,
   },
   {
     id: "EMP002",
@@ -24,7 +23,6 @@ const employeeShifts = [
     status: "غایب",
     shift: "شیفت عصر",
     time: "۱۶:۰۰ - ۲۴:۰۰",
-    hours: 8,
   },
   {
     id: "EMP003",
@@ -32,7 +30,6 @@ const employeeShifts = [
     status: "مرخصی",
     shift: "شیفت شب",
     time: "۰۰:۰۰ - ۸:۰۰",
-    hours: 8,
   },
   {
     id: "EMP004",
@@ -40,7 +37,6 @@ const employeeShifts = [
     status: "حاضر",
     shift: "شیفت صبح",
     time: "۸:۰۰ - ۱۶:۰۰",
-    hours: 8,
   },
   {
     id: "EMP005",
@@ -48,13 +44,10 @@ const employeeShifts = [
     status: "تأخیر",
     shift: "شیفت عصر",
     time: "۱۶:۰۰ - ۲۴:۰۰",
-    hours: 7.5,
   },
 ]
 
 export default function EmployeeShiftTable() {
-  const totalHours = employeeShifts.reduce((sum, shift) => sum + shift.hours, 0)
-
   return (
     <Table className="w-full">
       <TableCaption>لیست حضور و غیاب کارمندان</TableCaption>
