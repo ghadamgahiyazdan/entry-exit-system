@@ -12,22 +12,26 @@ model Employee {
   id         Int      @id @default(autoincrement())
   name       String
   employeeId String   @unique
-  shifts     Shift[]  // Relationship to shifts
-  reports    Report[] // Relationship to reports
+  shifts     Shift[]
+  reports    Report[]
   createdAt  DateTime @default(now())
 }
 
 model Shift {
   id          Int       @id @default(autoincrement())
-  title       String
-  time   String
-  employees   Employee[] // Many-to-many relationship with Employee
-  reports     Report[]   // Relationship to reports
+  title       String    // e.g. "شیفت صبح", "شیفت عصر", "شیفت شب"
+  startTime   String    // e.g. "۸:۰۰"
+  endTime     String    // e.g. "۱۶:۰۰"
+  date        String    // e.g. "۱۴۰۲/۰۵/۱۵" (Persian date format)
+  employees   Employee[]
+  reports     Report[]
+  createdAt   DateTime  @default(now())
 }
 
 model Report {
   id          Int       @id @default(autoincrement())
-  description String?
+  status      String    // "حاضر", "غایب", "مرخصی", "تأخیر"
+  hours       Float     // e.g. 8, 7.5, 0
   employee    Employee  @relation(fields: [employeeId], references: [id])
   employeeId  Int
   shift       Shift     @relation(fields: [shiftId], references: [id])
@@ -35,4 +39,6 @@ model Report {
   ready       Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@index([employeeId, shiftId])  // For faster queries
 }

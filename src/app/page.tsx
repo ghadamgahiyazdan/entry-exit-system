@@ -1,21 +1,15 @@
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import React from 'react';
+import TableSection, { TemployeeShift } from '@/components/TableSection';
 
-const employeeShifts = [
+const employeeShifts: TemployeeShift[] = [
   {
     id: "EMP001",
     name: "علی محمدی",
     status: "حاضر",
     shift: "شیفت صبح",
     time: "۸:۰۰ - ۱۶:۰۰",
+    hours: 8,
+    date: "۱۴۰۲/۰۵/۱۵" // Added date field
   },
   {
     id: "EMP002",
@@ -23,6 +17,8 @@ const employeeShifts = [
     status: "غایب",
     shift: "شیفت عصر",
     time: "۱۶:۰۰ - ۲۴:۰۰",
+    hours: 0,
+    date: "۱۴۰۲/۰۵/۱۵" // Added date field
   },
   {
     id: "EMP003",
@@ -30,6 +26,8 @@ const employeeShifts = [
     status: "مرخصی",
     shift: "شیفت شب",
     time: "۰۰:۰۰ - ۸:۰۰",
+    hours: 0,
+    date: "۱۴۰۲/۰۵/۱۵" // Added date field
   },
   {
     id: "EMP004",
@@ -37,6 +35,8 @@ const employeeShifts = [
     status: "حاضر",
     shift: "شیفت صبح",
     time: "۸:۰۰ - ۱۶:۰۰",
+    hours: 8,
+    date: "۱۴۰۲/۰۵/۱۵" // Added date field
   },
   {
     id: "EMP005",
@@ -44,33 +44,17 @@ const employeeShifts = [
     status: "تأخیر",
     shift: "شیفت عصر",
     time: "۱۶:۰۰ - ۲۴:۰۰",
+    hours: 7.5,
+    date: "۱۴۰۲/۰۵/۱۵" // Added date field
   },
 ]
 
-export default function EmployeeShiftTable() {
+const Page = () => {
   return (
-    <Table className="w-full">
-      <TableCaption>لیست حضور و غیاب کارمندان</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[25%] text-center">نام کارمند</TableHead>
-          <TableHead className="w-[25%] text-center">وضعیت</TableHead>
-          <TableHead className="w-[25%] text-center">شیفت</TableHead>
-          <TableHead className="w-[25%] text-center">زمان</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {employeeShifts.map((employee) => (
-          <TableRow key={employee.id}>
-            <TableCell className="text-center font-medium">{employee.name}</TableCell>
-            <TableCell className="text-center">{employee.status}</TableCell>
-            <TableCell className="text-center">{employee.shift}</TableCell>
-            <TableCell className="text-center">{employee.time}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-      <TableFooter>
-      </TableFooter>
-    </Table>
-  )
-}
+    <section className="container mx-auto p-4">
+      <TableSection employeeShifts={employeeShifts}/>
+    </section>
+  );
+};
+
+export default Page;
