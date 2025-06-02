@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-
 }
 
 datasource db {
@@ -18,27 +17,32 @@ model Employee {
 }
 
 model Shift {
-  id        Int        @id @default(autoincrement())
-  title     String // e.g. "شیفت صبح", "شیفت عصر", "شیفت شب"
-  Time      String
-  employees Employee[]
-  reports   Report[]
-  createdAt DateTime   @default(now())
+  id          Int        @id @default(autoincrement())
+  title       String // e.g. "شیفت صبح", "شیفت عصر", "شیفت شب"
+  description String
+  is_delete   Boolean    @default(false)
+  deleted_at  DateTime?
+  employees   Employee[]
+  reports     Report[]
+  createdAt   DateTime   @default(now())
 }
 
 model Report {
-  id         Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  status     String // "حاضر", "غایب", "مرخصی", "تأخیر"
+  status String // "حاضر", "غایب", "مرخصی", "تأخیر"
 
   employee   Employee @relation(fields: [employeeId], references: [id])
   employeeId Int
 
-  shift      Shift    @relation(fields: [shiftId], references: [id])
-  shiftId    Int
+  shift   Shift @relation(fields: [shiftId], references: [id])
+  shiftId Int
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  is_delete  Boolean @default(false)
+  deleted_at String?
 
   @@index([employeeId, shiftId]) // For faster queries
 }
