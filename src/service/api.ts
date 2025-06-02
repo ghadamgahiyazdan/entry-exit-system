@@ -7,9 +7,11 @@ const server = axios.create({
 
 const add_employee = (data: any) => server.post("employee/add", data);
 const dell_employee = (data: any) => server.post("employee/dell", data);
+const get_employee = () => server.get("employee/get");
 
 const add_shift = (data: any) => server.post("shift/add", data);
 const dell_shift = (data: any) => server.post("shift/dell", data);
+const get_shift = () => server.get("shift/get");
 
 const add_report = (data: any) => server.post("report/add", data);
 const dell_report = (data: any) => server.post("report/dell", data);
@@ -22,5 +24,7 @@ export {
   dell_employee,
   dell_report,
   dell_shift,
+  get_employee,
+  get_shift,
   get_report,
 };
