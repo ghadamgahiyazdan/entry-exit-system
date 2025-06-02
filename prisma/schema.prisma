@@ -18,27 +18,24 @@ model Employee {
 }
 
 model Shift {
-  id          Int       @id @default(autoincrement())
-  title       String    // e.g. "شیفت صبح", "شیفت عصر", "شیفت شب"
-  startTime   String    // e.g. "۸:۰۰"
-  endTime     String    // e.g. "۱۶:۰۰"
-  date        String    // e.g. "۱۴۰۲/۰۵/۱۵" (Persian date format)
-  employees   Employee[]
-  reports     Report[]
-  createdAt   DateTime  @default(now())
+  id        Int        @id @default(autoincrement())
+  title     String // e.g. "شیفت صبح", "شیفت عصر", "شیفت شب"
+  Time      String
+  employees Employee[]
+  reports   Report[]
+  createdAt DateTime   @default(now())
 }
 
 model Report {
-  id          Int       @id @default(autoincrement())
-  status      String    // "حاضر", "غایب", "مرخصی", "تأخیر"
-  hours       Float     // e.g. 8, 7.5, 0
-  employee    Employee  @relation(fields: [employeeId], references: [id])
-  employeeId  Int
-  shift       Shift     @relation(fields: [shiftId], references: [id])
-  shiftId     Int
-  ready       Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id         Int      @id @default(autoincrement())
+  status     String // "حاضر", "غایب", "مرخصی", "تأخیر"
+  hours      Float // e.g. 8, 7.5, 0
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId Int
+  shift      Shift    @relation(fields: [shiftId], references: [id])
+  shiftId    Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  @@index([employeeId, shiftId])  // For faster queries
+  @@index([employeeId, shiftId]) // For faster queries
 }
