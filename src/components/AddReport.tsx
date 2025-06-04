@@ -1,4 +1,5 @@
-import React from 'react';
+"use client"
+import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import {
   Select,
@@ -7,56 +8,155 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { get_shift, get_employee, add_report } from '@/service/api';
+
+interface Employee {
+  employeeId: string;
+  name: string;
+}
+
+interface Shift {
+  id: string;
+  title: string;
+  description: string;
+}
 
 const AddReport = () => {
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [shifts, setShifts] = useState<Shift[]>([]);
+  const [selectedEmployee, setSelectedEmployee] = useState<string>();
+  const [selectedShift, setSelectedShift] = useState<string>();
+  const [selectedStatus, setSelectedStatus] = useState<string>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const [employeeResponse, shiftResponse] = await Promise.all([
+          get_employee(),
+          get_shift()
+        ]);
+
+        setEmployees(employeeResponse.data.data);
+        setShifts(shiftResponse.data.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSubmit = async () => {
+    if (!selectedEmployee || !selectedShift || !selectedStatus) {
+      alert('لطفاً تمام فیلدها را پر کنید');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await add_report({
+        employeeId: selectedEmployee,
+        shiftId: selectedShift,
+        status: selectedStatus
+      });
+
+      if (response.status !== 200) {
+        throw new Error(response.data?.message || 'خطا در ثبت گزارش');
+      }
+
+      alert('گزارش با موفقیت ثبت شد');
+      // Reset form
+      setSelectedEmployee(undefined);
+      setSelectedShift(undefined);
+      setSelectedStatus(undefined);
+    } catch (error) {
+      console.error('Error submitting report:', error);
+      alert('خطا در ثبت گزارش');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section className="col-span-3 lg:col-span-1 bg-gray-100 flex flex-col justify-center items-center p-6 gap-4 text-2xl border rounded-lg">
       <h1 className="text-center">اضافه کردن گزارش</h1>
       <form className="flex flex-col justify-center items-center gap-3 w-full">
         <div className="flex items-center gap-2">
-          {/*employee*/}
-          <Select>
-            <SelectTrigger className="w-[180px] bg-white">
-              <SelectValue placeholder="کارمند" />
+          <Select
+            value={selectedEmployee}
+            onValueChange={setSelectedEmployee}
+            disabled={isLoading}
+          >
+            <SelectTrigger className="w-[180px] bg-white [&>span]:font-bold [&>span]:text-black">
+              <SelectValue placeholder={isLoading ? "در حال بارگذاری..." : "کارمند"} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="employee1">کارمند 1</SelectItem>
-              <SelectItem value="employee2">کارمند 2</SelectItem>
-              <SelectItem value="employee3">کارمند 3</SelectItem>
+              {employees.map(employee => (
+                <SelectItem
+                  key={employee.employeeId}
+                  value={employee.employeeId}
+                  className="font-bold text-black"
+                >
+                  {employee.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
 
         <div className="flex items-center gap-2">
-          {/*shift*/}
-          <Select>
-            <SelectTrigger className="w-[180px]  bg-white">
-              <SelectValue placeholder="شیفت" />
+          <Select
+            value={selectedShift}
+            onValueChange={setSelectedShift}
+            disabled={isLoading}
+          >
+            <SelectTrigger className="w-[180px] bg-white [&>span]:font-bold [&>span]:text-black">
+              <SelectValue placeholder={isLoading ? "در حال بارگذاری..." : "شیفت"} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="morning">صبح</SelectItem>
-              <SelectItem value="afternoon">عصر</SelectItem>
-              <SelectItem value="night">شب</SelectItem>
+              {shifts.map(shift => (
+                <SelectItem
+                  key={shift.id}
+                  value={shift.id.toString()}
+                  className="font-bold text-black"
+                >
+                  {shift.title}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
 
         <div className="flex items-center gap-2">
-          {/*status*/}
-          <Select>
-            <SelectTrigger className="w-[180px] bg-white">
+          <Select
+            value={selectedStatus}
+            onValueChange={setSelectedStatus}
+            disabled={isLoading}
+          >
+            <SelectTrigger className="w-[180px] bg-white [&>span]:font-bold [&>span]:text-black">
               <SelectValue placeholder="وضعیت" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="تأخیر">تأخیر</SelectItem>
-              <SelectItem value="مرخصی">مرخصی</SelectItem>
-              <SelectItem value="غایب">غایب</SelectItem>
-              <SelectItem value="حاضر">حاضر</SelectItem>
+              <SelectItem value="تأخیر" className="font-bold text-black">تأخیر</SelectItem>
+              <SelectItem value="مرخصی" className="font-bold text-black">مرخصی</SelectItem>
+              <SelectItem value="غایب" className="font-bold text-black">غایب</SelectItem>
+              <SelectItem value="حاضر" className="font-bold text-black">حاضر</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </form>
-      <Button className='w-10'>تایید</Button>
+      <Button
+        className='w-24'
+        onClick={handleSubmit}
+        disabled={isLoading || isSubmitting}
+      >
+        {isSubmitting ? 'در حال ثبت...' : 'تایید'}
+      </Button>
     </section>
   );
 };

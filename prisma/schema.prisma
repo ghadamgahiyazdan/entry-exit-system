@@ -13,7 +13,6 @@ model Employee {
   employeeId String    @unique
   is_delete  Boolean   @default(false)
   shifts     Shift[]
-  reports    Report[]
   deleted_at DateTime?
   createdAt  DateTime  @default(now())
 }
@@ -25,7 +24,6 @@ model Shift {
   is_delete   Boolean    @default(false)
   deleted_at  DateTime?
   employees   Employee[]
-  reports     Report[]
   createdAt   DateTime   @default(now())
 }
 
@@ -34,10 +32,8 @@ model Report {
 
   status String // "حاضر", "غایب", "مرخصی", "تأخیر"
 
-  employee   Employee @relation(fields: [employeeId], references: [id])
   employeeId Int
 
-  shift   Shift @relation(fields: [shiftId], references: [id])
   shiftId Int
 
   createdAt DateTime @default(now())
