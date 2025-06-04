@@ -59,16 +59,11 @@ const AddReport = () => {
 
     setIsSubmitting(true);
     try {
-      const response = await add_report({
+      add_report({
         employeeId: selectedEmployee,
         shiftId: selectedShift,
         status: selectedStatus
       });
-
-      if (response.status !== 200) {
-        throw new Error(response.data?.message || 'خطا در ثبت گزارش');
-      }
-
       alert('گزارش با موفقیت ثبت شد');
       // Reset form
       setSelectedEmployee(undefined);

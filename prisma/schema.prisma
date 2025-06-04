@@ -10,7 +10,7 @@ datasource db {
 model Employee {
   id         Int       @id @default(autoincrement())
   name       String
-  employeeId String    @unique
+  employeeId Int    @unique
   is_delete  Boolean   @default(false)
   shifts     Shift[]
   deleted_at DateTime?
