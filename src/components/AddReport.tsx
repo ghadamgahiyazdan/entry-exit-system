@@ -97,7 +97,7 @@ const AddReport = () => {
                   value={employee.employeeId}
                   className="font-bold text-black"
                 >
-                  {employee.name}
+                  {employee.employeeId}:={'>'}{employee.name}
                 </SelectItem>
               ))}
             </SelectContent>

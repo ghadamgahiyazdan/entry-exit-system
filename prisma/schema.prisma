@@ -10,37 +10,39 @@ datasource db {
 model Employee {
   id         Int       @id @default(autoincrement())
   name       String
-  employeeId Int    @unique
+  employeeId Int       @unique
   is_delete  Boolean   @default(false)
-  shifts     Shift[]
+  shifts     Shift[]   @relation("EmployeeShifts")
+  reports    Report[]
   deleted_at DateTime?
   createdAt  DateTime  @default(now())
 }
 
 model Shift {
   id          Int        @id @default(autoincrement())
-  title       String // e.g. "شیفت صبح", "شیفت عصر", "شیفت شب"
+  title       String
   description String
   is_delete   Boolean    @default(false)
   deleted_at  DateTime?
-  employees   Employee[]
+  employees   Employee[] @relation("EmployeeShifts")
+  reports     Report[]
   createdAt   DateTime   @default(now())
 }
 
+
 model Report {
-  id Int @id @default(autoincrement())
-
-  status String // "حاضر", "غایب", "مرخصی", "تأخیر"
-
+  id         Int       @id @default(autoincrement())
+  status     String
   employeeId Int
-
-  shiftId Int
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  shiftId    Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   is_delete  Boolean   @default(false)
   deleted_at DateTime?
 
-  @@index([employeeId, shiftId]) // For faster queries
+  employee   Employee  @relation(fields: [employeeId], references: [id])
+  shift      Shift     @relation(fields: [shiftId], references: [id])
+
+  @@index([employeeId, shiftId])
 }
+
