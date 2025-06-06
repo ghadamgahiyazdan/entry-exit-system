@@ -94,10 +94,10 @@ const AddReport = () => {
               {employees.map(employee => (
                 <SelectItem
                   key={employee.employeeId}
-                  value={employee.employeeId}
+                  value={employee.employeeId.toString()}
                   className="font-bold text-black"
                 >
-                  {employee.employeeId}:={'>'}{employee.name}
+                  {employee.employeeId}: {employee.name}
                 </SelectItem>
               ))}
             </SelectContent>

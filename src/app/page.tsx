@@ -1,6 +1,7 @@
 import AddEmployee from '@/components/AddEmployee';
 import AddReport from '@/components/AddReport';
 import AddShift from '@/components/AddShift';
+import ShowTabel from '@/components/ShowTabel';
 import React from 'react';
 
 const Page = () => {
@@ -14,6 +15,10 @@ const Page = () => {
 
       {/* Report Section */}
       <AddReport />
+
+      {/* Show Report Tabel */}
+      <ShowTabel/>
+    
     </div>
   );
 };

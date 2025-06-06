@@ -16,9 +16,9 @@ export async function POST(req: NextRequest) {
     }
 
     // بررسی تکراری نبودن شماره پرسنلی
-    const existingEmployee = await prisma.employee.findFirst({
+    const existingEmployee = await prisma.employee.findUnique({
       where: {
-        employeeId
+        employeeId : parseInt(employeeId)
       }
     });
 
@@ -35,8 +35,8 @@ export async function POST(req: NextRequest) {
     // ایجاد کارمند جدید
     const newEmployee = await prisma.employee.create({
       data: {
-        name,
-        employeeId,
+        name: name,
+        employeeId: parseInt(employeeId)
       },
     });
 
@@ -50,7 +50,6 @@ export async function POST(req: NextRequest) {
     );
   } catch (error) {
     console.error("خطا در ثبت کارمند:", error);
-    // خطای عمومی سرور
     return NextResponse.json(
       {
         success: false,
