@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { get_employee, get_shift, dell_employee, dell_shift } from '@/service/api';
+import { useRefreshStore } from '@/store/RefreshStore';
 
 interface Employee {
   id: number;
@@ -16,6 +17,7 @@ interface Shift {
 }
 
 const RmTable = () => {
+  const {refresh, setRefresh} = useRefreshStore()
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,22 +42,14 @@ const RmTable = () => {
     };
 
     fetchData();
-  }, []);
-
-  // لاگ داده‌ها هر بار که تغییر کنند
-  useEffect(() => {
-    console.log('Employees:', employees);
-  }, [employees]);
-
-  useEffect(() => {
-    console.log('Shifts:', shifts);
-  }, [shifts]);
+  }, [refresh]);
 
   const handleDeleteEmployee = async (id: number) => {
     if (confirm('آیا از حذف این کارمند اطمینان دارید؟')) {
       try {
         await dell_employee(id); // توجه: ارسال داده به شکل آبجکت
         setEmployees(prev => prev.filter(emp => emp.id !== id));
+        setRefresh()
       } catch (error) {
         console.error('خطا در حذف کارمند:', error);
         setError('خطا در حذف کارمند');
@@ -68,6 +62,7 @@ const RmTable = () => {
       try {
         await dell_shift(id); // توجه: ارسال داده به شکل آبجکت
         setShifts(prev => prev.filter(shift => shift.id !== id));
+        setRefresh()
       } catch (error) {
         console.error('خطا در حذف شیفت:', error);
         setError('خطا در حذف شیفت');

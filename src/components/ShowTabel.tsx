@@ -2,11 +2,12 @@
 
 import React from "react";
 import { get_report } from "@/service/api";
+import { useRefreshStore } from "@/store/RefreshStore";
 
 const ShowTabel = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = React.useState<any[]>([]);
-
+  const {refresh} = useRefreshStore();
   React.useEffect(() => {
     const fetchData = async () => {
       try {
@@ -19,7 +20,7 @@ const ShowTabel = () => {
     };
 
     fetchData();
-  }, []);
+  }, [refresh]);
 
   React.useEffect(() => {
     console.log(data);

@@ -4,6 +4,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Button } from './ui/button';
 import { add_shift } from '@/service/api';
+import { useRefreshStore } from '@/store/RefreshStore';
 
 interface ShiftFormData {
   title: string;
@@ -11,6 +12,7 @@ interface ShiftFormData {
 }
 
 const AddShift = () => {
+  const {setRefresh} = useRefreshStore();
   const [formData, setFormData] = useState<ShiftFormData>({
     title: '',
     description: ''
@@ -37,6 +39,7 @@ const AddShift = () => {
         description: ''
       });
       alert('شیفت جدید با موفقیت ثبت شد');
+      setRefresh()
     } catch (error) {
       console.error('خطا در ثبت شیفت:', error);
       alert('خطا در ثبت اطلاعات. لطفاً مجدداً تلاش نمایید');

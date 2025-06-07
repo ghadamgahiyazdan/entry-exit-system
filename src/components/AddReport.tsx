@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { get_shift, get_employee, add_report } from '@/service/api';
+import { useRefreshStore } from '@/store/RefreshStore';
 
 interface Employee {
   employeeId: string;
@@ -22,6 +23,7 @@ interface Shift {
 }
 
 const AddReport = () => {
+  const {setRefresh,refresh} = useRefreshStore()
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<string>();
@@ -49,7 +51,7 @@ const AddReport = () => {
     };
 
     fetchData();
-  }, []);
+  }, [refresh]);
 
   const handleSubmit = async () => {
     if (!selectedEmployee || !selectedShift || !selectedStatus) {
@@ -69,6 +71,7 @@ const AddReport = () => {
       setSelectedEmployee(undefined);
       setSelectedShift(undefined);
       setSelectedStatus(undefined);
+      setRefresh()
     } catch (error) {
       console.error('Error submitting report:', error);
       alert('خطا در ثبت گزارش');

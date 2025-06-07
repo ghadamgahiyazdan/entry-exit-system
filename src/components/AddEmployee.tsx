@@ -4,6 +4,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Button } from './ui/button';
 import { add_employee } from '@/service/api';
+import { useRefreshStore } from '@/store/RefreshStore';
 
 interface EmployeeFormData {
     name: string;
@@ -24,6 +25,8 @@ const AddEmployee = () => {
         }));
     };
 
+    const {setRefresh} = useRefreshStore();
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         try {
@@ -33,6 +36,7 @@ const AddEmployee = () => {
                 employeeId: ''
             });
             alert('کارمند با موفقیت اضافه شد');
+            setRefresh()
         } catch {
             alert('خطا در اضافه کردن کارمند');
         }
