@@ -51,6 +51,7 @@ export async function DELETE(req: NextRequest) {
         is_delete: true,
       },
     });
+    
 
     return NextResponse.json(
       {

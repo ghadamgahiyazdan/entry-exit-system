@@ -54,24 +54,28 @@ const AddReport = () => {
   }, [refresh]);
 
   const handleSubmit = async () => {
+    // Check if all fields are filled
     if (!selectedEmployee || !selectedShift || !selectedStatus) {
-      alert('لطفاً تمام فیلدها را پر کنید');
+      // Create error message for missing fields
+      const missingFields = [];
+      if (!selectedEmployee) missingFields.push('کارمند');
+      if (!selectedShift) missingFields.push('شیفت');
+      if (!selectedStatus) missingFields.push('وضعیت');
+      
+      alert(`لطفاً تمام فیلدها را پر کنید\nفیلدهای خالی: ${missingFields.join('، ')}`);
       return;
     }
 
     setIsSubmitting(true);
     try {
-      add_report({
+      await add_report({
         employeeId: selectedEmployee,
         shiftId: selectedShift,
         status: selectedStatus
       });
       alert('گزارش با موفقیت ثبت شد');
-      // Reset form
-      setSelectedEmployee(undefined);
-      setSelectedShift(undefined);
-      setSelectedStatus(undefined);
-      setRefresh()
+      // Reset form only on success
+      setRefresh();
     } catch (error) {
       console.error('Error submitting report:', error);
       alert('خطا در ثبت گزارش');

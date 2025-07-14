@@ -17,7 +17,8 @@ const AddShift = () => {
     title: '',
     description: ''
   });
-
+  const [startShift, setStartShift] = useState('');
+  const [endShift, setEndShift] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -28,18 +29,35 @@ const AddShift = () => {
     }));
   };
 
+  const handleTimeChange = (e: ChangeEvent<HTMLInputElement>, type: 'start' | 'end') => {
+    const { value } = e.target;
+    if (type === 'start') {
+      setStartShift(value);
+    } else {
+      setEndShift(value);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     try {
-      await add_shift(formData);
+      // Combine description with time information
+      const submissionData = {
+        ...formData,
+        description: `${formData.description} | زمان شروع: ${startShift} | زمان پایان: ${endShift}`
+      };
+      
+      await add_shift(submissionData);
       setFormData({
         title: '',
         description: ''
       });
+      setStartShift('');
+      setEndShift('');
       alert('شیفت جدید با موفقیت ثبت شد');
-      setRefresh()
+      setRefresh();
     } catch (error) {
       console.error('خطا در ثبت شیفت:', error);
       alert('خطا در ثبت اطلاعات. لطفاً مجدداً تلاش نمایید');
@@ -83,6 +101,40 @@ const AddShift = () => {
             />
             <Label htmlFor="description" className="text-right whitespace-nowrap text-lg">
               توضیحات
+            </Label>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <Input 
+              type="time"
+              id="startShift"
+              value={startShift}
+              onChange={(e) => handleTimeChange(e, 'start')}
+              className='bg-white flex-1 text-right'
+              required
+              disabled={isSubmitting}
+            />
+            <Label htmlFor="startShift" className="text-right whitespace-nowrap text-lg">
+              زمان شروع شیفت
+            </Label>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <Input 
+              type="time"
+              id="endShift"
+              value={endShift}
+              onChange={(e) => handleTimeChange(e, 'end')}
+              className='bg-white flex-1 text-right'
+              required
+              disabled={isSubmitting}
+            />
+            <Label htmlFor="endShift" className="text-right whitespace-nowrap text-lg">
+              زمان پایان شیفت
             </Label>
           </div>
         </div>

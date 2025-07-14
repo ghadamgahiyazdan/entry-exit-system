@@ -14,22 +14,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const existingShift = await prisma.shift.findFirst({
-      where: {
-        title: title
-      }
-    });
-
-    if (existingShift) {
-      return NextResponse.json(
-        { 
-          success: false,
-          error: "شیفت با این عنوان قبلاً ثبت شده است"
-        },
-        { status: 409 }
-      );
-    }
-
     const newShift = await prisma.shift.create({
       data: {
         title,

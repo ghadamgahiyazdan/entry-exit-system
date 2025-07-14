@@ -7,43 +7,61 @@ export async function POST(req: NextRequest) {
   try {
     const { reportId } = await req.json();
 
-    // اعتبارسنجی ورودی
-    if (!reportId) {
+    // Input validation
+    if (reportId === undefined || reportId === null) {
       return NextResponse.json(
-        { error: "شناسه گزارش الزامی می‌باشد" },
+        { 
+          success: false,
+          error: "شناسه گزارش الزامی می‌باشد" 
+        },
         { status: 400 }
       );
     }
 
-    // بررسی نوع داده
-    if (typeof reportId !== "number") {
+    // Type validation
+    const id = Number(reportId);
+    if (isNaN(id)) {
       return NextResponse.json(
-        { error: "شناسه گزارش باید عدد باشد" },
+        { 
+          success: false,
+          error: "شناسه گزارش باید عدد باشد" 
+        },
         { status: 400 }
       );
     }
 
-    // بررسی وجود گزارش
+    // Check if report exists
     const existingReport = await prisma.report.findUnique({
-      where: { id: reportId }
+      where: { id }
     });
 
     if (!existingReport) {
       return NextResponse.json(
         { 
           success: false,
-          error: "گزارش یافت نشد"
+          error: "گزارش یافت نشد" 
         },
         { status: 404 }
       );
     }
-    
-    // انجام soft delete
+
+    // Check if already deleted
+    if (existingReport.is_delete) {
+      return NextResponse.json(
+        { 
+          success: false,
+          error: "این گزارش قبلاً حذف شده است" 
+        },
+        { status: 410 }
+      );
+    }
+
+    // Perform soft delete with proper date format
     const deletedReport = await prisma.report.update({
-      where: { id: reportId },
+      where: { id },
       data: {
-        deleted_at: new Date().toLocaleDateString('fa-IR'),
-        is_delete: true
+        is_delete: true,
+        deleted_at: new Date() // Store as DateTime instead of string
       }
     });
 
@@ -51,20 +69,26 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: "گزارش با موفقیت حذف شد",
-        data: deletedReport,
+        data: {
+          id: deletedReport.id,
+          deleted_at: new Date(deletedReport.deleted_at || '').toLocaleDateString('fa-IR')
+        }
       },
       { status: 200 }
     );
+
   } catch (error) {
     console.error("خطا در حذف گزارش:", error);
 
-    // خطای عمومی سرور
     return NextResponse.json(
       {
         success: false,
         error: "خطای سرور. لطفاً مجدداً تلاش نمایید",
+        details: error instanceof Error ? error.message : "Unknown error"
       },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }

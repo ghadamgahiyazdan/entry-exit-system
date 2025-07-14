@@ -1,13 +1,15 @@
 "use client";
 
 import React from "react";
-import { get_report } from "@/service/api";
+import { get_report, dell_report } from "@/service/api";
 import { useRefreshStore } from "@/store/RefreshStore";
 
 const ShowTabel = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = React.useState<any[]>([]);
-  const {refresh} = useRefreshStore();
+  const { refresh, setRefresh } = useRefreshStore();
+  const [isDeleting, setIsDeleting] = React.useState(false);
+
   React.useEffect(() => {
     const fetchData = async () => {
       try {
@@ -22,25 +24,23 @@ const ShowTabel = () => {
     fetchData();
   }, [refresh]);
 
-  React.useEffect(() => {
-    console.log(data);
-  }, [data]);
-
-  // تابع کمکی برای تعیین رنگ کارت بر اساس وضعیت
-  function getStatusClasses(status: string) {
-    switch (status) {
-      case "حاضر":
-        return "bg-green-100 border-green-400 text-green-800 border";
-      case "غایب":
-        return "bg-red-100 border-red-400 text-red-800 border";
-      case "مرخصی":
-        return "bg-yellow-100 border-yellow-400 text-yellow-800 border";
-      case "تأخیر":
-        return "bg-orange-100 border-orange-400 text-orange-800 border";
-      default:
-        return "bg-gray-100 border-gray-300 text-gray-800 border";
+  const handleDelete = async (reportId: number) => {
+    if (!confirm("آیا از حذف این گزارش اطمینان دارید؟")) {
+      return;
     }
-  }
+
+    setIsDeleting(true);
+    try {
+      await dell_report({ reportId });
+      alert("گزارش با موفقیت حذف شد");
+      setRefresh(); // Trigger refresh to update the list
+    } catch (error) {
+      console.error("خطا در حذف گزارش:", error);
+      alert("خطا در حذف گزارش");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <main className="min-h-screen w-screen bg-gray-100 p-8 text-right rounded-md">
@@ -57,10 +57,18 @@ const ShowTabel = () => {
           {data.map((report) => (
             <article
               key={report.id}
-              className={`rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 ${getStatusClasses(
+              className={`rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 relative ${getStatusClasses(
                 report.status
               )}`}
             >
+              <button
+                onClick={() => handleDelete(report.id)}
+                disabled={isDeleting}
+                className="absolute top-2 left-2 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm transition-colors disabled:opacity-50"
+              >
+                {isDeleting ? "در حال حذف..." : "حذف"}
+              </button>
+
               <header className="mb-4 border-b border-blue-200 pb-2">
                 <h2 className="text-xl font-semibold text-blue-800">
                   گزارش شماره {report.id}
@@ -94,5 +102,20 @@ const ShowTabel = () => {
     </main>
   );
 };
+
+function getStatusClasses(status: string) {
+  switch (status) {
+    case "حاضر":
+      return "bg-green-100 border-green-400 text-green-800 border";
+    case "غایب":
+      return "bg-red-100 border-red-400 text-red-800 border";
+    case "مرخصی":
+      return "bg-yellow-100 border-yellow-400 text-yellow-800 border";
+    case "تأخیر":
+      return "bg-orange-100 border-orange-400 text-orange-800 border";
+    default:
+      return "bg-gray-100 border-gray-300 text-gray-800 border";
+  }
+}
 
 export default ShowTabel;
